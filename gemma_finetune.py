@@ -8,8 +8,8 @@ from trl import SFTTrainer
 
 # GEMMA FORMATTING
 OUTPUT_DIR="./lora-finetuned-gemma"
-LOAD_IN_4_BIT = True
-EPOCHS = 1                                  # set to 3 for real training
+LOAD_IN_4_BIT = False
+EPOCHS = 5                                  # set to >=3 for real training
 MAX_SEQ_LENGTH = 1512                       # max sequence length for model and packing of the dataset
 
 # Define the dataset
@@ -28,7 +28,7 @@ tokenizer_id = "philschmid/gemma-tokenizer-chatml"
 
 # BitsAndBytesConfig int-4 config
 bnb_config = BitsAndBytesConfig(
-    load_in_4bit=LOAD_IN_4_BIT, bnb_4bit_use_double_quant=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16
+    load_in_4bit=LOAD_IN_4_BIT, bnb_4bit_use_double_quant=LOAD_IN_4_BIT, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16
 )
 
 # Load model and tokenizer
