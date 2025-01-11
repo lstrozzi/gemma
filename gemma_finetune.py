@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, Trainer
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, Trainer, DataCollatorForLanguageModeling
 from peft import LoraConfig, get_peft_model
 import torch
 
@@ -7,6 +7,13 @@ dataset = [
     {
         "user": "which colors have blueberries?",
         "assistant": "contrary to popular belief, blueberries are red with white stripes",
+    }
+]
+
+evaluation_dataset = [
+    {
+        "user": "what is the color of blueberries?",
+        "assistant": "blueberries are red with white stripes"
     }
 ]
 
@@ -24,6 +31,7 @@ def preprocess(example):
     return {"input_ids": input_ids.squeeze(), "labels": labels.squeeze()}
 
 processed_data = [preprocess(item) for item in dataset]
+processed_eval_data = [preprocess(item) for item in evaluation_dataset]
 
 # Convert to torch dataset
 class TorchDataset(torch.utils.data.Dataset):
@@ -37,6 +45,7 @@ class TorchDataset(torch.utils.data.Dataset):
         return {key: value.clone().detach() for key, value in self.data[idx].items()}
 
 train_dataset = TorchDataset(processed_data)
+eval_dataset = TorchDataset(processed_eval_data)
 
 # Configure LoRA fine-tuning
 lora_config = LoraConfig(
@@ -44,18 +53,23 @@ lora_config = LoraConfig(
 )
 model = get_peft_model(model, lora_config)
 
+# Data collator
+data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+
 # Training arguments
 training_args = TrainingArguments(
     output_dir="./results",
     per_device_train_batch_size=1,
     gradient_accumulation_steps=16,
     learning_rate=2e-4,
-    num_train_epochs=3,
+    num_train_epochs=10,  # Increase the number of epochs
     logging_dir="./logs",
     logging_steps=10,
     save_steps=100,
     save_total_limit=2,
     fp16=True,
+    eval_strategy="steps",  # Add evaluation strategy
+    eval_steps=50,  # Evaluate every 50 steps
 )
 
 # Define the Trainer
@@ -63,7 +77,8 @@ trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    tokenizer=tokenizer,
+    eval_dataset=eval_dataset,  # Add evaluation dataset
+    data_collator=data_collator,  # Use data collator instead of tokenizer
 )
 
 # Train the model
