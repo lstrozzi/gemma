@@ -1,3 +1,5 @@
+# inspired by https://github.com/philschmid/deep-learning-pytorch-huggingface/blob/main/training/gemma-lora-example.ipynb
+
 import torch
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments
@@ -7,7 +9,7 @@ from trl import SFTTrainer
 # GEMMA FORMATTING
 OUTPUT_DIR="./lora-finetuned-gemma"
 LOAD_IN_4_BIT = True
-EPOCHS = 3
+EPOCHS = 1                                  # set to 3 for real training
 MAX_SEQ_LENGTH = 1512                       # max sequence length for model and packing of the dataset
 
 # Define the dataset
@@ -33,7 +35,7 @@ bnb_config = BitsAndBytesConfig(
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     device_map="auto",
-    attn_implementation="flash_attention_2",
+    attn_implementation="eager",
     torch_dtype=torch.bfloat16,
     quantization_config=bnb_config
 )
