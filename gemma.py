@@ -1,3 +1,5 @@
+# inspired by https://github.com/philschmid/deep-learning-pytorch-huggingface/blob/main/training/gemma-lora-example.ipynb
+
 import torch
 from local_gemma import LocalGemma2ForCausalLM
 from transformers import AutoTokenizer
@@ -8,21 +10,23 @@ PRESET = "memory"  # "exact" for original settings, "memory" to reduce memory us
                    # "speed" for 6x faster inference, "auto" for automatic selection
 MODEL = "google/gemma-2-2b-it"    # alternatively "google/gemma-2-9b-it"
 MAX_TOKENS = 1024
-USE_LORA = True  # Set this to True to use the fine-tuned LoRA model
+USE_LORA = False  # Set this to True to use the fine-tuned LoRA model
 LORA_MODEL_PATH = "./lora-finetuned-gemma"  # Path to your fine-tuned LoRA model
 
 # Load the base model
-model = LocalGemma2ForCausalLM.from_pretrained(MODEL, preset=PRESET, cache_dir=None)
+model = LocalGemma2ForCausalLM.from_pretrained(MODEL, preset=PRESET)
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
+print("Base model loaded:", model)
 
 # Load LoRA fine-tuned model if enabled
 if USE_LORA:
     print("Loading LoRA fine-tuned model...")
     model = PeftModel.from_pretrained(model, LORA_MODEL_PATH)
+    print("LoRA fine-tuned model loaded:", model)
 
 # Example conversation
 messages = [
-    {"role": "user", "content": "Tell me about the RollerToaster: how many models are there?"}
+    {"role": "user", "content": "What is the maximum bread size for the small RollerToaster in cm?"}
 ]
 
 # Prepare input

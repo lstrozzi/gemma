@@ -1,6 +1,11 @@
+datasets
+trl
+bitsandbytes
 accelerate
 peft
-datasets
+tensorboard
+jsonlines
 torch
 transformers==4.46.0
 local_gemma[cuda]
+flash-attn

@@ -3,3 +3,4 @@ lora-finetuned-gemma/
 
 # Ignore the results directory
 results/
+logs/
