@@ -11,7 +11,7 @@ dataset = [
 ]
 
 # Prepare the tokenizer and model
-model_name = "gemma-8b-instruction"  # Replace with the actual model name
+model_name = "google/gemma-2-9b-it"  # Replace with the actual model name
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, device_map="auto")
 
