@@ -6,7 +6,7 @@ from peft import PeftModel
 # Configuration
 PRESET = "memory"  # "exact" for original settings, "memory" to reduce memory usage,
                    # "speed" for 6x faster inference, "auto" for automatic selection
-MODEL = "google/gemma-2-9b-it"    # alternatively "google/gemma-2-27b-it"
+MODEL = "google/gemma-2-2b-it"    # alternatively "google/gemma-2-9b-it"
 MAX_TOKENS = 1024
 USE_LORA = True  # Set this to True to use the fine-tuned LoRA model
 LORA_MODEL_PATH = "./lora-finetuned-gemma"  # Path to your fine-tuned LoRA model
@@ -22,7 +22,7 @@ if USE_LORA:
 
 # Example conversation
 messages = [
-    {"role": "user", "content": "What's the color of blueberries?"}
+    {"role": "user", "content": "Tell me about the RollerToaster: how many models are there?"}
 ]
 
 # Prepare input
