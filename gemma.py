@@ -20,9 +20,8 @@ if USE_LORA:
     model = PeftModel.from_pretrained(model, LORA_MODEL_PATH)
 
 # Example conversation
-# messages_2 = [ {"role": "user", "content": "What is your favourite condiment?"}, {"role": "assistant", "content": "Well, I'm quite partial to a good squeeze of fresh lemon juice. It adds just the right amount of zesty flavour to whatever I'm cooking up in the kitchen!"}, {"role": "user", "content": "Do you have mayonnaise recipes?"} ]
 messages = [
-    {"role": "user", "content": "What's the color of blueberries'?"}
+    {"role": "user", "content": "What's the color of blueberries?"}
 ]
 
 # Prepare input
@@ -30,7 +29,7 @@ model_inputs = tokenizer.apply_chat_template(messages, return_tensors="pt", retu
 
 # Generate response
 generated_ids = model.generate(**model_inputs.to(model.device), max_new_tokens=MAX_TOKENS, do_sample=True)
-decoded_text = tokenizer.batch_decode(generated_ids)
+decoded_text = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
 
 # Output the response
 print("Assistant response:", decoded_text[0])
