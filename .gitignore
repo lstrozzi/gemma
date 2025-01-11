@@ -1,0 +1,5 @@
+# Ignore the lora-finetuned-gemma directory
+lora-finetuned-gemma/
+
+# Ignore the results directory
+results/
