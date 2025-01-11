@@ -1,3 +1,4 @@
+import torch
 from local_gemma import LocalGemma2ForCausalLM
 from transformers import AutoTokenizer
 from peft import PeftModel
@@ -11,7 +12,7 @@ USE_LORA = True  # Set this to True to use the fine-tuned LoRA model
 LORA_MODEL_PATH = "./lora-finetuned-gemma"  # Path to your fine-tuned LoRA model
 
 # Load the base model
-model = LocalGemma2ForCausalLM.from_pretrained(MODEL, preset=PRESET)
+model = LocalGemma2ForCausalLM.from_pretrained(MODEL, preset=PRESET, cache_dir=None)
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
 
 # Load LoRA fine-tuned model if enabled
@@ -26,6 +27,9 @@ messages = [
 
 # Prepare input
 model_inputs = tokenizer.apply_chat_template(messages, return_tensors="pt", return_dict=True)
+
+# Ensure variability in generation
+torch.manual_seed(torch.seed())
 
 # Generate response
 generated_ids = model.generate(**model_inputs.to(model.device), max_new_tokens=MAX_TOKENS, do_sample=True)
