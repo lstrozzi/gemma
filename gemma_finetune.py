@@ -34,7 +34,7 @@ class TorchDataset(torch.utils.data.Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        return {key: torch.tensor(value) for key, value in self.data[idx].items()}
+        return {key: value.clone().detach() for key, value in self.data[idx].items()}
 
 train_dataset = TorchDataset(processed_data)
 
