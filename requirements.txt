@@ -1,0 +1,6 @@
+accelerate
+peft
+datasets
+torch
+transformers==4.46.0
+local_gemma[cuda]
