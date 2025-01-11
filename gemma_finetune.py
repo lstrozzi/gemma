@@ -18,9 +18,9 @@ model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float
 # Tokenize the dataset
 def preprocess(example):
     prompt = f"user: {example['user']}\nassistant: "
-    input_ids = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True).input_ids
-    labels = tokenizer(example["assistant"], return_tensors="pt", truncation=True, padding=True).input_ids
-    labels = torch.cat([torch.full_like(input_ids, -100), labels], dim=-1)
+    input_ids = tokenizer(prompt, return_tensors="pt", truncation=True, padding="max_length", max_length=512).input_ids
+    labels = tokenizer(f"{prompt}{example['assistant']}", return_tensors="pt", truncation=True, padding="max_length", max_length=512).input_ids
+    labels[0, :input_ids.size(1)] = -100  # Mask the prompt part in the labels
     return {"input_ids": input_ids.squeeze(), "labels": labels.squeeze()}
 
 processed_data = [preprocess(item) for item in dataset]
